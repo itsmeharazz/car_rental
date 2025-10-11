@@ -33,7 +33,7 @@ const menuItems = {
         {
           name: "Add Manager",
           path: "/dashboard/add-manager",
-        }
+        },
       ],
     },
     {
@@ -69,8 +69,8 @@ const menuItems = {
       name: "Drivers",
       subItems: [
         {
-          name: "Add Driver",
-          path: "/dashboard/add-driver",
+          name: "Pending Drivers",
+          path: "/dashboard/pending-drivers",
         },
         {
           name: "All Driver",
