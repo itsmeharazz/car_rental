@@ -12,6 +12,8 @@ const DriverRegister = () => {
     license_number: "",
     nid: "",
     experience_years: "",
+    password: "",
+    password_confirmation: "",
   });
 
   const [licenseImage, setLicenseImage] = useState(null);
@@ -20,6 +22,10 @@ const DriverRegister = () => {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState("");
 
+  const CLOUDINARY_URL =
+    "https://api.cloudinary.com/v1_1/dsgoi1hul/image/upload";
+  const CLOUDINARY_UPLOAD_PRESET = "car_rental";
+
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -27,29 +33,39 @@ const DriverRegister = () => {
     });
   };
 
+  const uploadImage = async (file) => {
+    if (!file) return null;
+    const fd = new FormData();
+    fd.append("file", file);
+    fd.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    const res = await fetch(CLOUDINARY_URL, { method: "POST", body: fd });
+    const data = await res.json();
+    return data.secure_url;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
     setLoading(true);
     try {
-      const fd = new FormData();
-      Object.keys(form).forEach((k) => {
-        if (form[k] !== "") fd.append(k, form[k]);
-      });
-      if (licenseImage) fd.append("license_image", licenseImage);
-      if (nidImage) fd.append("nid_image", nidImage);
-      if (profilePhoto) fd.append("profile_photo", profilePhoto);
+      const licenseUrl = await uploadImage(licenseImage);
+      const nidUrl = await uploadImage(nidImage);
+      const profileUrl = await uploadImage(profilePhoto);
 
-      const res = await api.post("/driver/register", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const payload = { ...form };
+      if (licenseUrl) payload.license_image = licenseUrl;
+      if (licenseUrl) payload.nid_image = nidUrl;
+      if (licenseUrl) payload.profile_photo = profileUrl;
+
+      const res = await api.post("/driver/register", payload);
 
       setMsg(
         res.data.message +
           (res.data.default_password
-            ? `Default Password;${res.data.default_password}`
+            ? `Default Password:${res.data.default_password}`
             : "")
       );
+
       setForm({
         first_name: "",
         last_name: "",
@@ -59,12 +75,15 @@ const DriverRegister = () => {
         license_number: "",
         nid: "",
         experience_years: "",
+        password: "",
+        password_confirmation: "",
       });
       setLicenseImage(null);
       setNidImage(null);
       setProfilePhoto(null);
     } catch (err) {
-      setMsg(err.response?.data?.message || "Registration Failed!");
+      console.error(err);
+      setMsg("Registration Failed!");
     } finally {
       setLoading(false);
     }

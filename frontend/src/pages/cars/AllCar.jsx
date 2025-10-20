@@ -57,27 +57,42 @@ const AllCar = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    setMessage("");
     try {
-      const formData = new FormData();
-      formData.append("name", editForm.name);
-      formData.append("brand", editForm.brand);
-      formData.append("model", editForm.model);
-      formData.append("daily_rate", editForm.daily_rate);
-      formData.append("status", editForm.status);
-
+      let imageUrl = null;
       if (editImage) {
-        formData.append("image", editImage);
+        const uploadData = new FormData();
+        uploadData.append("file", editImage);
+        uploadData.append("upload_preset", "car_rental");
+        const cloudRes = await fetch(
+          "https://api.cloudinary.com/v1_1/dsgoi1hul/image/upload",
+          {
+            method: "POST",
+            body: uploadData,
+          }
+        );
+        const cloudData = await cloudRes.json();
+        imageUrl = cloudData.secure_url;
       }
 
-      await api.post(`/cars/${editingCar.id}?_method=PUT`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const payload = {
+        name: editForm.name,
+        brand: editForm.brand,
+        model: editForm.model,
+        daily_rate: editForm.daily_rate,
+        status: editForm.status,
+      };
+      if (imageUrl) {
+        payload.image = imageUrl;
+      }
 
-      setMessage("Car Updated Successfully.");
+      await api.put(`/cars/${editingCar.id}`, payload);
+      setMessage("Car updated succesfully!");
       setEditingCar(null);
       fetchCars();
     } catch (err) {
-      setMessage(err.response?.data?.message || "Update Failed!");
+      console.error(err);
+      setMessage(err.response?.data?.message || "Update Failed");
     }
   };
 
@@ -126,7 +141,7 @@ const AllCar = () => {
                   <td className='border px-4 py-2'> {index + 1} </td>
                   <td className='border px-4 py-2'>
                     <img
-                      src={`http://127.0.0.1:8000/${car.image}`}
+                      src={car.image}
                       className='w-16 h-10 object-cover rounded'
                       alt=''
                     />
