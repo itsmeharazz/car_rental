@@ -36,8 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/driver/me',[DriverController::class, 'me']);
 
-    Route::get('/driver/{id}/pending',[DriverController::class, 'setPending']);
-    Route::get('/driver/{id}/assing-car',[DriverController::class, 'assingCar']);
+    Route::post('/driver/{id}/pending',[DriverController::class, 'setPending']);
+    Route::post('/driver/{id}/assign-car',[DriverController::class, 'assignCar']);
 
 
 });
