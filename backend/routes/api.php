@@ -13,6 +13,14 @@ Route::post('/login', [AuthController::class, 'login']);
 // Driver Registration
 Route::post('/driver/register',[DriverController::class, 'driverRegister']);
 
+// Frontend can fetch available cars without authentication
+Route::get('/cars-page',[CarController::class,'carPage']);
+Route::get('/cars/featured',[CarController::class,'featured']);
+Route::get('/cars/{id}',[CarController::class,'carDetails']);
+
+
+
+// This route group requires authentication
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('logout', [AuthController::class, 'logout']);

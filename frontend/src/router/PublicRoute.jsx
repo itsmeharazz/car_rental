@@ -7,7 +7,7 @@ import { useState } from "react";
 import Login from "../components/frontend/Login";
 import Home from "../pages/frontend/Home"
 import Cars from "../pages/frontend/Cars"
-import CarDetails from "../pages/frontend/CarDetails"
+import CarDetails from "../pages/frontend/CarDetails";
 import MyBooking from "../pages/frontend/MyBooking"
 import Footer from "../components/frontend/Footer";
 import Navbar from "../components/frontend/Navbar";
