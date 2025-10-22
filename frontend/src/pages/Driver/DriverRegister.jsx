@@ -23,7 +23,7 @@ const DriverRegister = () => {
   const [msg, setMsg] = useState("");
 
   const CLOUDINARY_URL =
-    "https://api.cloudinary.com/v1_1/dsgoi1hul/image/upload";
+    "https://api.cloudinary.com/v1_1/djc8nackq/image/upload";
   const CLOUDINARY_UPLOAD_PRESET = "car_rental";
 
   const handleChange = (e) => {

@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Car crud 
     Route::get('/cars',[CarController::class,'index']);
     Route::post('/cars',[CarController::class,'store']);
+    Route::get('/cars/{car}',[CarController::class,'show']);
     Route::put('/cars/{car}',[CarController::class,'update']);
     Route::delete('/cars/{car}',[CarController::class,'destroy']);
 
@@ -40,6 +41,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/driver/pending',[DriverController::class, 'pending']);
     Route::post('/driver/{id}/approve',[DriverController::class, 'approve']);
     Route::post('/driver/{id}/reject',[DriverController::class, 'reject']);
+    Route::put('driver/{id}',[DriverController::class, 'show']);
     Route::get('/drivers',[DriverController::class, 'index']);
 
     Route::get('/driver/me',[DriverController::class, 'me']);

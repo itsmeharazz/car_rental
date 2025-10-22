@@ -141,6 +141,9 @@ class DriverController extends Controller
         return response()->json($drivers);
     }
 
+    public function show(DriverProfile $driver){
+        return response()->json(['driver'=>$driver]);
+    }
     public function setPending(Request $request, $id)
     {
         $auth = $request->user();

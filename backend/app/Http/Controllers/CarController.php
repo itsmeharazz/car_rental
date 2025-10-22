@@ -12,6 +12,11 @@ class CarController extends Controller
         return Car::paginate(20);
     }
 
+    public function show(Car $car)
+    {
+        return response()->json(['car' => $car]);
+    }
+
     public function store(Request $request)
     {
         $auth = $request->user();
@@ -57,6 +62,12 @@ class CarController extends Controller
             'status' => 'in:available,booked,maintenance',
             'image' => 'nullable|url',
             'image_public_id' => 'nullable|string',
+            'seating_capacity' => 'nullable|integer|min:1',
+            'fuel_type' => 'nullable|string|max:50',
+            'transmission' => 'nullable|string|max:50',
+            'location' => 'nullable|string|max:100',
+            'description' => 'nullable|string',
+            'features' => 'nullable|array',
         ]);
 
         $car->update($data);
@@ -96,6 +107,8 @@ class CarController extends Controller
         if(!$car){
             return response()->json(['message'=>'Car not found'],404);
         }
-        return response()->json($car);
+        return response()->json([
+            'data' => $car
+        ], 200);
     }
 }

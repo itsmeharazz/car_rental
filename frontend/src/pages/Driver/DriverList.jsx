@@ -8,6 +8,7 @@ const DriverList = () => {
   const [cars, setCars] = useState([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [viewDriver, setViewDriver] = useState(null);
 
   const fetchDrivers = async () => {
     try {
@@ -30,6 +31,21 @@ const DriverList = () => {
     fetchDrivers();
     fetchCars();
   }, []);
+
+useEffect(() => {
+if (viewDriver) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
+    const handleEsc = (e) => {
+      if (e.key === "Escape") viewDriver(null);
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+},[viewDriver]);
+
+
 
   const handleApprove = async (id, assigned_car_id = null) => {
     if (!confirm("Approve this driver?")) return;
@@ -166,10 +182,11 @@ const DriverList = () => {
                         {d.status}{" "}
                       </span>
                     </td>
+                    {/* Action */}
                     <td className='p-2 flex gap-2 justify-center'>
                       <button
                         title='View'
-                        onClick={() => alert(JSON.stringify(d, null, 2))}
+                        onClick={() => setViewDriver(d)}
                         className='p-1 text-blue-600 hover:text-blue-800'>
                         <FiEye size={18} />
                       </button>
@@ -200,6 +217,76 @@ const DriverList = () => {
           </table>
         </div>
       </div>
+      {/* Show Driver Details */}
+      {viewDriver && (
+        <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] animate-fadeIn'>
+          <div className='bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-y-auto max-h-[90vh] relative animate-scaleIn'>
+            {/* Header */}
+            <div className='flex justify-between items-center p-4 border-b border-gray-200'>
+              <h2 className='text-xl font-semibold text-gray-800'>
+                {viewDriver.user?.name}
+              </h2>
+              <button
+                onClick={() => setViewDriver(null)}
+                className='text-gray-500 hover:text-gray-700 rounded-full p-2 hover:bg-gray-100 transition'>
+                ✕
+              </button>
+            </div>
+            {/* body */}
+            {/* Image */}
+            <div className='w-full h-64 overflow-hidden rounded-t-2xl flex items-start justify-between gap-6 pt-3 pl-3'>
+              <img
+                src={
+                  viewDriver.profile_photo ||
+                  viewDriver.user?.driverProfile?.profile_photo
+                }
+                alt={viewDriver.user?.name || "Driver Image"}
+                className='w-[220px] h-[220px] object-cover rounded-full text-center p-2'
+              />
+              {/* Driver info */}
+              <div className='flex flex-wrap gap-4 text-gray-700 mt-4'>
+                <p>
+                  <strong>Name:</strong> {viewDriver.user?.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {viewDriver.user?.email}
+                </p>
+                <p>
+                  <strong>Phone number: </strong>
+                  {viewDriver.phone}
+                </p>
+                <p>
+                  <strong>NID Number:</strong> {viewDriver.nid}
+                </p>
+                <p>
+                  <strong>license Number:</strong> {viewDriver.license_number}
+                </p>
+                <p>
+                  <strong>Experience:</strong> {viewDriver.experience_years}
+                </p>
+              </div>
+            </div>
+              <hr className='border-gray-200' />
+             <div className='flex justify-between items-start p-6 space-y-4'>
+
+              <div className="w-[50%]">
+                <p>License image</p>
+                <img
+                src={
+                  viewDriver.license_image
+                }/>
+              </div>
+              <div className="w-[50%]">
+                <p>Nid image</p>
+                <img
+                src={
+                  viewDriver.nid_image
+                }/>
+              </div>
+              </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
